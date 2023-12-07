@@ -37,7 +37,7 @@ namespace discordbot
             Commands.RegisterCommands<TestCommand>();
 
             var slashCommandsConfig = Client.UseSlashCommands();
-            //slashCommandsConfig.RegisterCommands<EntryCommand>();
+            slashCommandsConfig.RegisterCommands<EntryCommand>(607802183710277648);
 
             await Client.ConnectAsync();
             await Task.Delay(-1);
