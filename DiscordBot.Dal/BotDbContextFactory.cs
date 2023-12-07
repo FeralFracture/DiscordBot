@@ -9,7 +9,7 @@ namespace discordbot.dal
         public BotDbContext CreateDbContext(string[] args)
         {
             // Retrieve the connection string from the configuration
-            string connectionString = Configuration.getDBConnectionString()!;
+            string connectionString = Configuration.getDBConnectionString(true)!;
 
             // Set up DbContextOptions
             var optionsBuilder = new DbContextOptionsBuilder<BotDbContext>();
