@@ -3,6 +3,8 @@ using DSharpPlus.CommandsNext;
 using Microsoft.Extensions.Configuration;
 using discordbot.config;
 using discordbot.Commands;
+using DSharpPlus.SlashCommands;
+using discordbot.SlashCommands;
 
 namespace discordbot
 {
@@ -32,8 +34,10 @@ namespace discordbot
             };
 
             Commands = Client.UseCommandsNext(commandsConfig);
-
             Commands.RegisterCommands<TestCommand>();
+
+            var slashCommandsConfig = Client.UseSlashCommands();
+            //slashCommandsConfig.RegisterCommands<EntryCommand>();
 
             await Client.ConnectAsync();
             await Task.Delay(-1);

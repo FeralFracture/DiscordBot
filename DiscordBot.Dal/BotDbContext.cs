@@ -12,15 +12,8 @@ namespace discordbot.dal
             this.connectionString = Configuration.getDBConnectionString()!;
         }
 
-        public DbSet<Product> Products { get; set; }
+        public DbSet<ArtEntry> ArtEntries { get; set; }
     }
 
-    public class Product
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public decimal Price { get; set; }
-        // Entirely test junk that is not going to remain lol
-    }
 
 }
