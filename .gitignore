@@ -19,10 +19,6 @@
 *.log              
 *.tmp              
 
-DiscordBot.Config/appsettings.Development.json
-/DiscordBot/bin/Debug/net6.0
-/DiscordBot/obj
-/DiscordBot.Config/bin/Debug/net6.0
-/DiscordBot.Config/obj
-/DiscordBot.Dal/bin/Debug/net6.0
-/DiscordBot.Dal/obj
+appsettings.Development.json
+bin
+obj
