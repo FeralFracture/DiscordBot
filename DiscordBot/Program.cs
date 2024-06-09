@@ -14,11 +14,10 @@ using DiscordBot.Dal.Repositories;
 using discordbot.dal.Entities;
 using DiscordBot.Objects.Models;
 using DiscordBot.Objects.Interfaces.IRepositories;
-using DiscordBot.Dal;
-using DiscordBot.Objects.Interfaces;
 using DiscordBot.Biz.Interfaces;
 using DiscordBot.Biz;
 using Microsoft.EntityFrameworkCore.Design;
+using DiscordBot.Dal;
 
 namespace discordbot
 {
@@ -26,10 +25,11 @@ namespace discordbot
     {
         private static DiscordClient? Client { get; set; }
         private static CommandsNextExtension? Commands { get; set; }
+        private static IServiceProvider? ServiceProvider { get; set; }
         static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            var services = host.Services;
+            ServiceProvider = host.Services;
 
             var discordConfig = new DiscordConfiguration()
             {
@@ -47,7 +47,7 @@ namespace discordbot
                 EnableMentionPrefix = true,
                 EnableDms = true,
                 EnableDefaultHelp = false,
-                Services = services
+                Services = ServiceProvider
             };
 
             Commands = Client.UseCommandsNext(commandsConfig);
@@ -55,7 +55,7 @@ namespace discordbot
 
             var slashCommandsConfig = Client.UseSlashCommands(new SlashCommandsConfiguration
             {
-                Services = services
+                Services = ServiceProvider
             });
             slashCommandsConfig.RegisterCommands<EntryCommand>();
 
@@ -88,15 +88,31 @@ namespace discordbot
                    services.AddScoped<IRepositoryBase<ArtEntry, ArtEntryModel>, ArtEntryRepository>();
                    services.AddScoped<IArtEntryBiz, ArtEntryBiz>();
 
+                   services.AddScoped<IDiscordObjectRepositoryBase<Server, ServerModel>, GenericDiscordObjectRepository<Server, ServerModel>>();
+                   services.AddScoped<IDiscordServerBiz, DiscordServerBiz>();
+
                    // Add other necessary services here...
                });
 
         private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
         {
-            foreach (var server in Client!.Guilds.Values)
+            using (var scope = ServiceProvider!.CreateScope())
             {
-                //server.Id
+                var serverBiz = scope.ServiceProvider.GetRequiredService<IDiscordServerBiz>();
+
+                foreach (var server in Client!.Guilds.Values)
+                {
+                    var serverModel = new ServerModel
+                    {
+                        DiscordServerId = server.Id,
+                        Name = server.Name,
+                        JoinedAt = DateTime.Now
+                    };
+
+                    serverBiz.InitialzeServerCheck(serverModel);
+                }
             }
+
             return Task.CompletedTask;
         }
 

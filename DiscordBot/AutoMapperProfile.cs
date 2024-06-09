@@ -15,6 +15,7 @@ namespace DiscordBot.Objects
         public AutoMapperProfile()
         {
             CreateMap<ArtEntry, ArtEntryModel>().ReverseMap();
+            CreateMap<Server, ServerModel>().ReverseMap();
         }
     }
 }

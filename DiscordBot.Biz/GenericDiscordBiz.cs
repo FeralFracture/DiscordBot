@@ -7,13 +7,15 @@ namespace DiscordBot.Biz
         where TEntity : class
         where TModel : class
     {
+        protected new readonly IDiscordObjectRepositoryBase<TEntity, TModel> _repository;
         public GenericDiscordBiz(IDiscordObjectRepositoryBase<TEntity, TModel> repository) : base(repository)
         {
+            _repository = repository;
         }
 
         public virtual TModel? GetByUlongId(ulong discordId)
         {
-            return ((IDiscordObjectRepositoryBase<TEntity, TModel>)_repository).GetByUlongId(discordId);
+            return _repository.GetByUlongId(discordId);
         }
     }
 }

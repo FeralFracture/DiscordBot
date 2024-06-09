@@ -12,6 +12,6 @@ namespace discordbot.dal
 
 
         public DbSet<ArtEntry> ArtEntries { get; set; }
-        //public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<Server> Servers { get; set; }
     }
 }

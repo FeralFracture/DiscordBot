@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Dal
 {
-    public abstract class GenericDiscordObjectRepository<TEntity, TModel> : GenericRepository<TEntity, TModel>, IDiscordObjectRepositoryBase<TEntity, TModel>
+    public class GenericDiscordObjectRepository<TEntity, TModel> : GenericRepository<TEntity, TModel>, IDiscordObjectRepositoryBase<TEntity, TModel>
         where TModel : class
         where TEntity : class
     {
