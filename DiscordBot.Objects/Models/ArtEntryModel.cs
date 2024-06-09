@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace discordbot.dal
+namespace DiscordBot.Objects.Models
 {
     public record ArtEntryModel
     {
@@ -14,6 +14,6 @@ namespace discordbot.dal
         public ulong UserId { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
-        public DateTime date { get; set; }
+        public DateTime date { get; set; } = DateTime.UtcNow;
     }
 }

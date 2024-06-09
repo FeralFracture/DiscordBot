@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace discordbot.dal
+namespace discordbot.dal.Entities
 {
     [Table("artLog", Schema = "as")]
     public class ArtEntry
@@ -18,7 +18,7 @@ namespace discordbot.dal
         public ulong UserId { get; set; }
         public int Hours { get; set; }
         public int Minutes { get; set; }
-        public DateTime date { get; set; } = DateTime.Now.AddHours(2);
+        public DateTime date { get; set; } = DateTime.UtcNow;
         [Timestamp]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public byte[] RowVersion { get; set; }
