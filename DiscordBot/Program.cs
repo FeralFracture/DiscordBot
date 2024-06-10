@@ -6,12 +6,11 @@ using DSharpPlus.SlashCommands;
 using discordbot.SlashCommands;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using discordbot.dal;
 using Microsoft.EntityFrameworkCore;
 using DiscordBot.Objects;
 using Microsoft.Extensions.Logging;
 using DiscordBot.Dal.Repositories;
-using discordbot.dal.Entities;
+using DiscordBot.Dal.Entities;
 using DiscordBot.Objects.Models;
 using DiscordBot.Objects.Interfaces.IRepositories;
 using DiscordBot.Biz.Interfaces;
@@ -89,9 +88,10 @@ namespace discordbot
                    services.AddScoped<IArtEntryBiz, ArtEntryBiz>();
 
                    services.AddScoped<IDiscordObjectRepositoryBase<Server, ServerModel>, GenericDiscordObjectRepository<Server, ServerModel>>();
-                   services.AddScoped<IDiscordServerBiz, DiscordServerBiz>();
+                   services.AddScoped<IGenericDiscordBiz<Server, ServerModel>, ServerBiz>();
 
-                   // Add other necessary services here...
+                   services.AddScoped<IDiscordObjectRepositoryBase<Role, RoleModel>, GenericDiscordObjectRepository<Role, RoleModel>>();
+                   services.AddScoped<IGenericDiscordBiz<Role, RoleModel>, GenericDiscordBiz<Role, RoleModel>>();
                });
         private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
         {
@@ -101,7 +101,7 @@ namespace discordbot
         {
             using (var scope = ServiceProvider!.CreateScope())
             {
-                var serverBiz = scope.ServiceProvider.GetRequiredService<IDiscordServerBiz>();
+                var serverBiz = scope.ServiceProvider.GetRequiredService<IGenericDiscordBiz<Server, ServerModel>>();
 
                 foreach (var server in Client!.Guilds.Values)
                 {
@@ -120,7 +120,7 @@ namespace discordbot
                         Console.WriteLine($"An error occurred while fetching guild details for {server.Id}: {ex.Message}");
                     }
                 }
-                serverBiz.Prune(Client!.Guilds.Values);
+                serverBiz.Prune(Client!.Guilds.Values.Select(guild => guild.Id));
             }
         }
         

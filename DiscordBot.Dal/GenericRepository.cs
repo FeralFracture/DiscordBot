@@ -75,9 +75,15 @@ namespace DiscordBot.Dal
         public virtual void Delete(TModel model)
         {
             var entity = _mapper.Map<TEntity>(model);
-            _context.Set<TEntity>().Remove(entity);
-            _context.SaveChanges();
+            var primaryKey = GetPrimaryKey(entity);
+            var existingEntity = _context.Set<TEntity>().Find(primaryKey);
+            if (existingEntity != null)
+            {
+                _context.Set<TEntity>().Remove(existingEntity);
+                _context.SaveChanges();
+            }
         }
+
         public virtual void Delete(Guid id)
         {
             var transaction = _context.Database.CurrentTransaction == null ? _context.Database.BeginTransaction() : null;
@@ -93,6 +99,18 @@ namespace DiscordBot.Dal
                 _logger.LogWarning($"Exception of type {ex.GetType()} occured. Exception Messasge: {ex.Message}");
                 transaction?.Rollback();
             }
+        }
+
+        private object GetPrimaryKey(TEntity entity)
+        {
+            var keyProperties = _context.Model.FindEntityType(typeof(TEntity))!.FindPrimaryKey()!.Properties;
+            var primaryKey = new object[keyProperties.Count];
+            var i = 0;
+            foreach (var keyProperty in keyProperties)
+            {
+                primaryKey[i++] = entity.GetType().GetProperty(keyProperty.Name)?.GetValue(entity)!;
+            }
+            return primaryKey[0]; // Assuming single-column primary key
         }
 
 

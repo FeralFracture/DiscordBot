@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using discordbot.dal;
-using discordbot.dal.Entities;
+﻿using AutoMapper;
+using DiscordBot.Dal.Entities;
 using DiscordBot.Objects.Models;
 
 namespace DiscordBot.Objects
@@ -16,6 +10,7 @@ namespace DiscordBot.Objects
         {
             CreateMap<ArtEntry, ArtEntryModel>().ReverseMap();
             CreateMap<Server, ServerModel>().ReverseMap();
+            CreateMap<Role, RoleModel>().ReverseMap();
         }
     }
 }

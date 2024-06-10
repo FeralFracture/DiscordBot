@@ -1,8 +1,7 @@
-﻿using discordbot.dal.Entities;
-using DiscordBot.Dal.Entities;
+﻿using DiscordBot.Dal.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace discordbot.dal
+namespace DiscordBot.Dal
 {
     public class BotDbContext : DbContext
     {

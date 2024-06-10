@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace discordbot.dal.Entities
+namespace DiscordBot.Dal.Entities
 {
     [Table("Servers", Schema = "ff")]
     public class Server

@@ -1,11 +1,5 @@
-﻿using discordbot.dal.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscordBot.Dal.Entities
 {
@@ -18,6 +12,7 @@ namespace DiscordBot.Dal.Entities
         public ulong ParentDiscordServerId { get; set; }
         public string Name { get; set; } = string.Empty;
         public int permission_level { get; set; } = 0;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public Server? Server { get; set; }
         [Timestamp]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

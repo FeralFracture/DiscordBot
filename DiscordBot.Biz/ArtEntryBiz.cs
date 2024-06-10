@@ -1,4 +1,4 @@
-﻿using discordbot.dal.Entities;
+﻿using DiscordBot.Dal.Entities;
 using DiscordBot.Biz.Interfaces;
 using DiscordBot.Objects.Interfaces.IRepositories;
 using DiscordBot.Objects.Models;
