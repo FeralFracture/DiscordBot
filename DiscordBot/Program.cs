@@ -40,7 +40,8 @@ namespace discordbot
             };
             Client = new DiscordClient(discordConfig);
             Client.Ready += Client_Ready;
-
+            Client.GuildDownloadCompleted += Guilds_Downloaded;
+            
             var commandsConfig = new CommandsNextConfiguration()
             {
                 StringPrefixes = new string[] { Configuration.getDPrefix()! },
@@ -67,7 +68,6 @@ namespace discordbot
            Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((context, config) =>
             {
-                // Load configuration from files, environment variables, etc.
                 Configuration.Initialize();
             })
             .ConfigureServices((context, services) =>
@@ -93,8 +93,11 @@ namespace discordbot
 
                    // Add other necessary services here...
                });
-
         private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
+        {
+            return Task.CompletedTask;
+        }
+        private static async Task Guilds_Downloaded(DiscordClient sender, DSharpPlus.EventArgs.GuildDownloadCompletedEventArgs args)
         {
             using (var scope = ServiceProvider!.CreateScope())
             {
@@ -102,20 +105,25 @@ namespace discordbot
 
                 foreach (var server in Client!.Guilds.Values)
                 {
-                    var serverModel = new ServerModel
+                    try
                     {
-                        DiscordServerId = server.Id,
-                        Name = server.Name,
-                        JoinedAt = DateTime.Now
-                    };
-
-                    serverBiz.InitialzeServerCheck(serverModel);
+                        var serverModel = new ServerModel
+                        {
+                            DiscordServerId = server.Id,
+                            Name = server.Name,
+                            JoinedAt = DateTime.Now,
+                        };
+                        serverBiz.InitialzeServerCheck(serverModel);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred while fetching guild details for {server.Id}: {ex.Message}");
+                    }
                 }
+                serverBiz.Prune(Client!.Guilds.Values);
             }
-
-            return Task.CompletedTask;
         }
-
+        
         #region Configuration
         private static class Configuration
         {
@@ -172,3 +180,5 @@ namespace discordbot
         #endregion
     }
 }
+
+

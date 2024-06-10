@@ -25,6 +25,10 @@ namespace DiscordBot.Dal
             var entities = _context.Set<TEntity>();
             return _mapper.Map<IEnumerable<TModel>>(entities);
         }
+        public bool Contains(Expression<Func<TEntity, bool>> expression)
+        {
+            return _context.Set<TEntity>().FirstOrDefault(expression) != null;
+        }
         public virtual TModel? GetByGUID(Guid id)
         {
             var entity = _context.Set<TEntity>().Find(id);
@@ -90,6 +94,8 @@ namespace DiscordBot.Dal
                 transaction?.Rollback();
             }
         }
+
+
     }
 }
 

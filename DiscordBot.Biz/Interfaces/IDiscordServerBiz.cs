@@ -1,15 +1,12 @@
 ﻿using discordbot.dal.Entities;
 using DiscordBot.Objects.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DSharpPlus.Entities;
 
 namespace DiscordBot.Biz.Interfaces
 {
     public interface IDiscordServerBiz : IGenericDiscordBiz<Server, ServerModel>
     {
         void InitialzeServerCheck(ServerModel server);
+        void Prune(IEnumerable<DiscordGuild> guilds);
     }
 }

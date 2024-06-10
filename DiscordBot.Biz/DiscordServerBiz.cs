@@ -2,6 +2,7 @@
 using DiscordBot.Biz.Interfaces;
 using DiscordBot.Objects.Interfaces.IRepositories;
 using DiscordBot.Objects.Models;
+using DSharpPlus.Entities;
 
 namespace DiscordBot.Biz
 {
@@ -18,6 +19,17 @@ namespace DiscordBot.Biz
                 return;
             }
             _repository.Upsert(server);
+        }
+
+        public void Prune(IEnumerable<DiscordGuild> guilds)
+        {
+            foreach(var entry in _repository.GetAll())
+            {
+                if(!guilds.Any(x => x.Id == entry.DiscordServerId))
+                {
+                    _repository.Delete(entry);
+                }
+            }
         }
     }
 }

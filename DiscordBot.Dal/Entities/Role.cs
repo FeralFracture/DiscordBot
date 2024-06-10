@@ -1,4 +1,4 @@
-﻿using DiscordBot.Dal.Entities;
+﻿using discordbot.dal.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,18 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace discordbot.dal.Entities
+namespace DiscordBot.Dal.Entities
 {
-    [Table("Servers", Schema = "ff")]
-    public class Server
+    [Table("Roles", Schema = "ff")]
+    public class Role
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid ServerId { get; set; }
-        public ulong DiscordServerId { get; set; }
+        public Guid RoleId { get; set; }
+        public ulong DiscordRoleId { get; set; }
+        public ulong ParentDiscordServerId { get; set; }
         public string Name { get; set; } = string.Empty;
-        public DateTime JoinedAt { get; set; }
-        public DateTime? LeftAt { get; set; }
-        public ICollection<Role> Roles { get; set; } = new List<Role>();
+        public int permission_level { get; set; } = 0;
+        public Server? Server { get; set; }
         [Timestamp]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public byte[] RowVersion { get; set; }
