@@ -12,8 +12,8 @@ using DiscordBot.Dal;
 namespace discordbot.dal.Migrations
 {
     [DbContext(typeof(BotDbContext))]
-    [Migration("20231207052417_ulong-id")]
-    partial class ulongid
+    [Migration("20240609205116_create_servers_table")]
+    partial class create_servers_table
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace discordbot.dal.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("discordbot.dal.ArtEntry", b =>
+            modelBuilder.Entity("discordbot.dal.Entities.ArtEntry", b =>
                 {
                     b.Property<Guid>("ArtEntryId")
                         .ValueGeneratedOnAdd()
@@ -54,9 +54,42 @@ namespace discordbot.dal.Migrations
                     b.Property<decimal>("UserId")
                         .HasColumnType("decimal(20,0)");
 
+                    b.Property<DateTime>("date")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ArtEntryId");
 
                     b.ToTable("artLog", "as");
+                });
+
+            modelBuilder.Entity("discordbot.dal.Entities.Server", b =>
+                {
+                    b.Property<Guid>("ServerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("DiscordServerId")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LeftAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("ServerId");
+
+                    b.ToTable("Servers", "ff");
                 });
 #pragma warning restore 612, 618
         }

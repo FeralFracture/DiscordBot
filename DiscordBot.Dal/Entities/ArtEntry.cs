@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace discordbot.dal.Entities
+namespace DiscordBot.Dal.Entities
 {
     [Table("artLog", Schema = "as")]
     public class ArtEntry

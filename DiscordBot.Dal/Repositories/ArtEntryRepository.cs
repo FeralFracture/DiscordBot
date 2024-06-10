@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using discordbot.dal;
-using discordbot.dal.Entities;
-using DiscordBot.Objects.Interfaces.IRepositories;
+using DiscordBot.Dal.Entities;
 using DiscordBot.Objects.Models;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;

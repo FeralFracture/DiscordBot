@@ -25,6 +25,10 @@ namespace DiscordBot.Dal
             var entities = _context.Set<TEntity>();
             return _mapper.Map<IEnumerable<TModel>>(entities);
         }
+        public bool Contains(Expression<Func<TEntity, bool>> expression)
+        {
+            return _context.Set<TEntity>().FirstOrDefault(expression) != null;
+        }
         public virtual TModel? GetByGUID(Guid id)
         {
             var entity = _context.Set<TEntity>().Find(id);
@@ -55,25 +59,33 @@ namespace DiscordBot.Dal
                 else
                 {
                     _mapper.Map(model, entity);
-                    _context.Set<TEntity>().Update(entity);
                 }
 
                 _context.SaveChanges();
                 _context.Database.CommitTransaction();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError($"Exception of type {ex.GetType()} occured. Exception Messasge: {ex.Message}");
                 transaction?.Rollback();
+                throw;
             }
         }
 
-        public virtual void Delete(TModel model)
+        public virtual void Delete(TModel? model)
         {
-            var entity = _mapper.Map<TEntity>(model);
-            _context.Set<TEntity>().Remove(entity);
-            _context.SaveChanges();
+            if (model != null)
+            {
+                var entity = _mapper.Map<TEntity>(model);
+                var primaryKey = GetPrimaryKey(entity);
+                var existingEntity = _context.Set<TEntity>().Find(primaryKey);
+                if (existingEntity != null)
+                {
+                    _context.Set<TEntity>().Remove(existingEntity);
+                    _context.SaveChanges();
+                }
+            }
         }
+
         public virtual void Delete(Guid id)
         {
             var transaction = _context.Database.CurrentTransaction == null ? _context.Database.BeginTransaction() : null;
@@ -84,12 +96,26 @@ namespace DiscordBot.Dal
                 _context.SaveChanges();
                 _context.Database.CommitTransaction();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogWarning($"Exception of type {ex.GetType()} occured. Exception Messasge: {ex.Message}");
                 transaction?.Rollback();
+                throw;
             }
         }
+
+        private object GetPrimaryKey(TEntity entity)
+        {
+            var keyProperties = _context.Model.FindEntityType(typeof(TEntity))!.FindPrimaryKey()!.Properties;
+            var primaryKey = new object[keyProperties.Count];
+            var i = 0;
+            foreach (var keyProperty in keyProperties)
+            {
+                primaryKey[i++] = entity.GetType().GetProperty(keyProperty.Name)?.GetValue(entity)!;
+            }
+            return primaryKey[0]; // Assuming single-column primary key
+        }
+
+
     }
 }
 

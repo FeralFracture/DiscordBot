@@ -23,7 +23,7 @@ namespace DiscordBot.Biz
             return _repository.GetByGUID(id);
         }
         public virtual void Upsert(TModel model, Expression<Func<TEntity, bool>>? matchPredicate = null) => _repository.Upsert(model, matchPredicate);
-        public virtual void Delete(TModel model) => _repository.Delete(model);
+        public virtual void Delete(TModel? model) => _repository.Delete(model);
         public virtual void Delete(Guid id) => _repository.Delete(id);
     }
 }

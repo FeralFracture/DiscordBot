@@ -6,30 +6,31 @@ using DSharpPlus.SlashCommands;
 using discordbot.SlashCommands;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using discordbot.dal;
 using Microsoft.EntityFrameworkCore;
 using DiscordBot.Objects;
 using Microsoft.Extensions.Logging;
 using DiscordBot.Dal.Repositories;
-using discordbot.dal.Entities;
+using DiscordBot.Dal.Entities;
 using DiscordBot.Objects.Models;
 using DiscordBot.Objects.Interfaces.IRepositories;
-using DiscordBot.Dal;
-using DiscordBot.Objects.Interfaces;
 using DiscordBot.Biz.Interfaces;
 using DiscordBot.Biz;
 using Microsoft.EntityFrameworkCore.Design;
+using DiscordBot.Dal;
+using DiscordBot.SlashCommands;
+using DiscordBot;
 
 namespace discordbot
 {
     public class Program
     {
-        private static DiscordClient? Client { get; set; }
+        internal static DiscordClient? Client { get; private set; }
+        internal static IServiceProvider? ServiceProvider { get; private set; }
         private static CommandsNextExtension? Commands { get; set; }
         static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            var services = host.Services;
+            ServiceProvider = host.Services;
 
             var discordConfig = new DiscordConfiguration()
             {
@@ -39,7 +40,8 @@ namespace discordbot
                 AutoReconnect = true
             };
             Client = new DiscordClient(discordConfig);
-            Client.Ready += Client_Ready;
+            Client.Ready += EventHandlers.Client_Ready;
+            Client.GuildDownloadCompleted += EventHandlers.Guilds_Downloaded;
 
             var commandsConfig = new CommandsNextConfiguration()
             {
@@ -47,7 +49,7 @@ namespace discordbot
                 EnableMentionPrefix = true,
                 EnableDms = true,
                 EnableDefaultHelp = false,
-                Services = services
+                Services = ServiceProvider
             };
 
             Commands = Client.UseCommandsNext(commandsConfig);
@@ -55,9 +57,18 @@ namespace discordbot
 
             var slashCommandsConfig = Client.UseSlashCommands(new SlashCommandsConfiguration
             {
-                Services = services
+                Services = ServiceProvider
             });
-            slashCommandsConfig.RegisterCommands<EntryCommand>();
+            slashCommandsConfig.SlashCommandErrored += AttributesHandler.CmdErroredHandler;
+            try
+            {
+                slashCommandsConfig.RegisterCommands<EntryCommand>(607802183710277648);
+                slashCommandsConfig.RegisterCommands<RoleCommands>(607802183710277648);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             await Client.ConnectAsync();
             await Task.Delay(-1);
@@ -67,7 +78,6 @@ namespace discordbot
            Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((context, config) =>
             {
-                // Load configuration from files, environment variables, etc.
                 Configuration.Initialize();
             })
             .ConfigureServices((context, services) =>
@@ -88,17 +98,17 @@ namespace discordbot
                    services.AddScoped<IRepositoryBase<ArtEntry, ArtEntryModel>, ArtEntryRepository>();
                    services.AddScoped<IArtEntryBiz, ArtEntryBiz>();
 
-                   // Add other necessary services here...
+                   services.AddScoped<IDiscordObjectRepositoryBase<Server, ServerModel>, GenericDiscordObjectRepository<Server, ServerModel>>();
+                   services.AddScoped<IGenericDiscordBiz<Server, ServerModel>, ServerBiz>();
+
+                   services.AddScoped<IDiscordObjectRepositoryBase<Role, RoleModel>, GenericDiscordObjectRepository<Role, RoleModel>>();
+                   services.AddScoped<IRoleBiz, RoleBiz>();
+
+                   //custom attribute tags
+                   services.AddSingleton<RequirePermissionRoleAttribute>();
                });
 
-        private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
-        {
-            foreach (var server in Client!.Guilds.Values)
-            {
-                //server.Id
-            }
-            return Task.CompletedTask;
-        }
+
 
         #region Configuration
         private static class Configuration
@@ -156,3 +166,5 @@ namespace discordbot
         #endregion
     }
 }
+
+

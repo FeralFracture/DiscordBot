@@ -1,4 +1,4 @@
-﻿using discordbot.dal.Entities;
+﻿using DiscordBot.Dal.Entities;
 using DiscordBot.Objects.Models;
 
 namespace DiscordBot.Biz.Interfaces

@@ -16,9 +16,9 @@ namespace discordbot.SlashCommands
     public class EntryCommand : ApplicationCommandModule
     {
         private readonly IArtEntryBiz _artEntryBiz;
-        private readonly ILogger _logger;
+        private readonly ILogger<EntryCommand> _logger;
 
-        public EntryCommand(IArtEntryBiz artEntry, ILogger logger)
+        public EntryCommand(IArtEntryBiz artEntry, ILogger<EntryCommand> logger)
         {
             _artEntryBiz = artEntry;
             _logger = logger;
@@ -58,7 +58,6 @@ namespace discordbot.SlashCommands
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 var errorMessage = new DiscordWebhookBuilder()
                     .AddEmbed(new DiscordEmbedBuilder()
                     .WithColor(DiscordColor.Red)

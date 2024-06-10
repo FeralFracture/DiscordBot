@@ -5,6 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="DSharpPlus" Version="4.4.3" />
+  </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\DiscordBot.Dal\DiscordBot.Dal.csproj" />
 		<ProjectReference Include="..\DiscordBot.Objects\DiscordBot.Objects.csproj" />
