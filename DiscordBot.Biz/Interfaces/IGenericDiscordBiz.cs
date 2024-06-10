@@ -8,6 +8,6 @@ namespace DiscordBot.Biz.Interfaces
         TModel? GetByUlongId(ulong discordId);
         void InitialzeServerCheck(TModel model);
         void Prune(IEnumerable<ulong> existingIds);
-        void DeleteAllByDiscordID(ulong discordId);
+        void DeleteByDiscordID(ulong discordId);
     }
 }

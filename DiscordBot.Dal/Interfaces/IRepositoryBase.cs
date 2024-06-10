@@ -15,7 +15,7 @@ namespace DiscordBot.Objects.Interfaces.IRepositories
         TModel? GetByGUID(Guid id);
         IEnumerable<TModel> SelectBy(Expression<Func<TEntity, bool>> expression);
         void Upsert(TModel model, Expression<Func<TEntity, bool>>? matchPredicate = null);
-        void Delete(TModel model);
+        void Delete(TModel? model);
         void Delete(Guid id);
     }
 }

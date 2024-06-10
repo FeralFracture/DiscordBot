@@ -59,28 +59,30 @@ namespace DiscordBot.Dal
                 else
                 {
                     _mapper.Map(model, entity);
-                    _context.Set<TEntity>().Update(entity);
                 }
 
                 _context.SaveChanges();
                 _context.Database.CommitTransaction();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError($"Exception of type {ex.GetType()} occured. Exception Messasge: {ex.Message}");
                 transaction?.Rollback();
+                throw;
             }
         }
 
-        public virtual void Delete(TModel model)
+        public virtual void Delete(TModel? model)
         {
-            var entity = _mapper.Map<TEntity>(model);
-            var primaryKey = GetPrimaryKey(entity);
-            var existingEntity = _context.Set<TEntity>().Find(primaryKey);
-            if (existingEntity != null)
+            if (model != null)
             {
-                _context.Set<TEntity>().Remove(existingEntity);
-                _context.SaveChanges();
+                var entity = _mapper.Map<TEntity>(model);
+                var primaryKey = GetPrimaryKey(entity);
+                var existingEntity = _context.Set<TEntity>().Find(primaryKey);
+                if (existingEntity != null)
+                {
+                    _context.Set<TEntity>().Remove(existingEntity);
+                    _context.SaveChanges();
+                }
             }
         }
 
@@ -94,10 +96,10 @@ namespace DiscordBot.Dal
                 _context.SaveChanges();
                 _context.Database.CommitTransaction();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogWarning($"Exception of type {ex.GetType()} occured. Exception Messasge: {ex.Message}");
                 transaction?.Rollback();
+                throw;
             }
         }
 

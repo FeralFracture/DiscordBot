@@ -17,14 +17,16 @@ using DiscordBot.Biz.Interfaces;
 using DiscordBot.Biz;
 using Microsoft.EntityFrameworkCore.Design;
 using DiscordBot.Dal;
+using DiscordBot.SlashCommands;
+using DiscordBot;
 
 namespace discordbot
 {
     public class Program
     {
-        private static DiscordClient? Client { get; set; }
+        internal static DiscordClient? Client { get; private set; }
+        internal static IServiceProvider? ServiceProvider { get; private set; }
         private static CommandsNextExtension? Commands { get; set; }
-        private static IServiceProvider? ServiceProvider { get; set; }
         static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
@@ -38,9 +40,9 @@ namespace discordbot
                 AutoReconnect = true
             };
             Client = new DiscordClient(discordConfig);
-            Client.Ready += Client_Ready;
-            Client.GuildDownloadCompleted += Guilds_Downloaded;
-            
+            Client.Ready += EventHandlers.Client_Ready;
+            Client.GuildDownloadCompleted += EventHandlers.Guilds_Downloaded;
+
             var commandsConfig = new CommandsNextConfiguration()
             {
                 StringPrefixes = new string[] { Configuration.getDPrefix()! },
@@ -57,7 +59,16 @@ namespace discordbot
             {
                 Services = ServiceProvider
             });
-            slashCommandsConfig.RegisterCommands<EntryCommand>();
+            slashCommandsConfig.SlashCommandErrored += AttributesHandler.CmdErroredHandler;
+            try
+            {
+                slashCommandsConfig.RegisterCommands<EntryCommand>(607802183710277648);
+                slashCommandsConfig.RegisterCommands<RoleCommands>(607802183710277648);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             await Client.ConnectAsync();
             await Task.Delay(-1);
@@ -91,39 +102,14 @@ namespace discordbot
                    services.AddScoped<IGenericDiscordBiz<Server, ServerModel>, ServerBiz>();
 
                    services.AddScoped<IDiscordObjectRepositoryBase<Role, RoleModel>, GenericDiscordObjectRepository<Role, RoleModel>>();
-                   services.AddScoped<IGenericDiscordBiz<Role, RoleModel>, GenericDiscordBiz<Role, RoleModel>>();
-               });
-        private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
-        {
-            return Task.CompletedTask;
-        }
-        private static async Task Guilds_Downloaded(DiscordClient sender, DSharpPlus.EventArgs.GuildDownloadCompletedEventArgs args)
-        {
-            using (var scope = ServiceProvider!.CreateScope())
-            {
-                var serverBiz = scope.ServiceProvider.GetRequiredService<IGenericDiscordBiz<Server, ServerModel>>();
+                   services.AddScoped<IRoleBiz, RoleBiz>();
 
-                foreach (var server in Client!.Guilds.Values)
-                {
-                    try
-                    {
-                        var serverModel = new ServerModel
-                        {
-                            DiscordServerId = server.Id,
-                            Name = server.Name,
-                            JoinedAt = DateTime.Now,
-                        };
-                        serverBiz.InitialzeServerCheck(serverModel);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"An error occurred while fetching guild details for {server.Id}: {ex.Message}");
-                    }
-                }
-                serverBiz.Prune(Client!.Guilds.Values.Select(guild => guild.Id));
-            }
-        }
-        
+                   //custom attribute tags
+                   services.AddSingleton<RequirePermissionRoleAttribute>();
+               });
+
+
+
         #region Configuration
         private static class Configuration
         {

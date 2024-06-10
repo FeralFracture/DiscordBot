@@ -3,6 +3,7 @@ using DiscordBot.Dal.Entities;
 using DiscordBot.Objects.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DiscordBot.Biz
 {
@@ -16,35 +17,12 @@ namespace DiscordBot.Biz
             _repository = repository;
         }
 
-        public void DeleteAllByDiscordID(ulong discordId)
+        public void DeleteByDiscordID(ulong discordId)
         {
-            // Get the type of the model
-            Type modelType = typeof(TModel);
-
-            // Find the property that contains "discord" and "id" in its name (case-insensitive)
-            var propertyInfo = modelType.GetProperties()
-                .FirstOrDefault(p => p.Name.StartsWith("discord", StringComparison.OrdinalIgnoreCase)
-                                  && p.Name.EndsWith("id", StringComparison.OrdinalIgnoreCase));
-
-            if (propertyInfo == null)
-            {
-                throw new InvalidOperationException("No property containing 'discord' and 'id' found on the model.");
-            }
-
-            // Ensure the property type is ulong
-            if (propertyInfo.PropertyType != typeof(ulong))
-            {
-                throw new InvalidOperationException("The property found is not of type ulong.");
-            }
-
-            // Get the property name for the predicate
-            var propertyName = propertyInfo.Name;
-
-            var deleteRange = _repository.SelectBy(x => (ulong)typeof(TEntity).GetProperty(propertyName)!.GetValue(x)! == discordId);
-            foreach (var item in deleteRange)
-            {
-                _repository.Delete(item);
-            }
+            var deleter = _repository.GetByUlongId(discordId);
+            if (deleter != null)
+                
+                _repository.Delete(deleter);
         }
 
         public virtual TModel? GetByUlongId(ulong discordId)
