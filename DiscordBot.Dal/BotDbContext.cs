@@ -12,12 +12,19 @@ namespace DiscordBot.Dal
         public DbSet<ArtEntry> ArtEntries { get; set; }
         public DbSet<Server> Servers { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<CustomRole> CustomRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Role>()
                 .HasOne(r => r.Server)
                 .WithMany(s => s.Roles)
+                .HasForeignKey(r => r.ParentDiscordServerId)
+                .HasPrincipalKey(s => s.DiscordServerId);
+
+            modelBuilder.Entity<CustomRole>()
+                .HasOne(r => r.Server)
+                .WithMany(s => s.CustomRoles)
                 .HasForeignKey(r => r.ParentDiscordServerId)
                 .HasPrincipalKey(s => s.DiscordServerId);
 

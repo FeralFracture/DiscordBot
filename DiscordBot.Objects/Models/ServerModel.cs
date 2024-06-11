@@ -15,5 +15,6 @@ namespace DiscordBot.Objects.Models
         public DateTime JoinedAt { get; set; }
         public DateTime? LeftAt { get; set; }
         public ICollection<RoleModel> Roles { get; set; } = new List<RoleModel>();
+        public ICollection<CustomRoleModel> CustomRoles { get; set; } = new List<CustomRoleModel>();
     }
 }

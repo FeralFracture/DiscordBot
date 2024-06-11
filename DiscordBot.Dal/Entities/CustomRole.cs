@@ -12,7 +12,9 @@ namespace DiscordBot.Dal.Entities
         public ulong ParentDiscordServerId { get; set; }
         public ulong OwnerUserDiscordId { get; set; }
         public string Name { get; set; } = string.Empty;
-        public int[] RoleColor { get; set; } = { 0, 0, 0 };
+        public byte RoleColorR { get; set; } = 0;
+        public byte RoleColorG { get; set; } = 0;
+        public byte RoleColorB { get; set; } = 0;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public Server? Server { get; set; }
         [Timestamp]

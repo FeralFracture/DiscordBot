@@ -19,6 +19,7 @@ namespace DiscordBot.Dal.Entities
         public DateTime JoinedAt { get; set; }
         public DateTime? LeftAt { get; set; }
         public ICollection<Role> Roles { get; set; } = new List<Role>();
+        public ICollection<CustomRole> CustomRoles { get; set; } = new List<CustomRole>();
         [Timestamp]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public byte[] RowVersion { get; set; }
