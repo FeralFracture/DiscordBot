@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace DiscordBot.Biz
+namespace DiscordBot.Biz.Bizes
 {
     public class GenericDiscordBiz<TEntity, TModel> : GenericBiz<TEntity, TModel>, IGenericDiscordBiz<TEntity, TModel>
         where TEntity : class
@@ -21,7 +21,7 @@ namespace DiscordBot.Biz
         {
             var deleter = _repository.GetByUlongId(discordId);
             if (deleter != null)
-                
+
                 _repository.Delete(deleter);
         }
 

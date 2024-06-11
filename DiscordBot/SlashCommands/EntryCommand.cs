@@ -1,15 +1,9 @@
 ﻿using DiscordBot.Biz.Interfaces;
-using DiscordBot.Dal.Repositories;
 using DiscordBot.Objects.Models;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace discordbot.SlashCommands
 {

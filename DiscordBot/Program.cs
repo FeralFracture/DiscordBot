@@ -14,11 +14,11 @@ using DiscordBot.Dal.Entities;
 using DiscordBot.Objects.Models;
 using DiscordBot.Objects.Interfaces.IRepositories;
 using DiscordBot.Biz.Interfaces;
-using DiscordBot.Biz;
 using Microsoft.EntityFrameworkCore.Design;
 using DiscordBot.Dal;
 using DiscordBot.SlashCommands;
 using DiscordBot;
+using DiscordBot.Biz.Bizes;
 
 namespace discordbot
 {
@@ -40,8 +40,6 @@ namespace discordbot
                 AutoReconnect = true
             };
             Client = new DiscordClient(discordConfig);
-            Client.Ready += EventHandlers.Client_Ready;
-            Client.GuildDownloadCompleted += EventHandlers.Guilds_Downloaded;
 
             var commandsConfig = new CommandsNextConfiguration()
             {
@@ -53,15 +51,22 @@ namespace discordbot
             };
 
             Commands = Client.UseCommandsNext(commandsConfig);
-            Commands.RegisterCommands<TestCommand>();
-
             var slashCommandsConfig = Client.UseSlashCommands(new SlashCommandsConfiguration
             {
                 Services = ServiceProvider
             });
+
+            var eventHandlers = ServiceProvider.GetRequiredService<EventHandlers>();
+            Client.Ready += eventHandlers.Client_Ready;
+            Client.GuildDownloadCompleted += eventHandlers.Guilds_Downloaded;
+            Client.GuildDeleted += eventHandlers.Client_GuildDeleted;
+
             slashCommandsConfig.SlashCommandErrored += AttributesHandler.CmdErroredHandler;
+
             try
             {
+                Commands.RegisterCommands<TestCommand>();
+
                 slashCommandsConfig.RegisterCommands<EntryCommand>(607802183710277648);
                 slashCommandsConfig.RegisterCommands<RoleCommands>(607802183710277648);
             }
@@ -93,6 +98,9 @@ namespace discordbot
 
                    // Add AutoMapper
                    services.AddAutoMapper(typeof(AutoMapperProfile));
+
+                   //Add Handlers
+                   services.AddScoped<EventHandlers>();
 
                    // Register ArtEntryRepository and other BIZ/DAL services
                    services.AddScoped<IRepositoryBase<ArtEntry, ArtEntryModel>, ArtEntryRepository>();

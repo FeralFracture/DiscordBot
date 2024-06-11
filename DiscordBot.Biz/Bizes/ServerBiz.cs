@@ -4,7 +4,7 @@ using DiscordBot.Objects.Interfaces.IRepositories;
 using DiscordBot.Objects.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace DiscordBot.Biz
+namespace DiscordBot.Biz.Bizes
 {
     public class ServerBiz : GenericDiscordBiz<Server, ServerModel>, IGenericDiscordBiz<Server, ServerModel>
     {

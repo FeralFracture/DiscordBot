@@ -2,7 +2,7 @@
 using DiscordBot.Objects.Interfaces.IRepositories;
 using System.Linq.Expressions;
 
-namespace DiscordBot.Biz
+namespace DiscordBot.Biz.Bizes
 {
     public class GenericBiz<TEntity, TModel> : IGenericBiz<TEntity, TModel>
         where TEntity : class

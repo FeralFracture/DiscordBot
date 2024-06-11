@@ -28,6 +28,17 @@ namespace DiscordBot.Objects
                 opt.MapFrom(src => src.RoleId);
                 opt.Condition(src => src.RoleId != null);
             });
+            CreateMap<CustomRole, CustomRoleModel>()
+                .ForMember(dest => dest.RoleColor,
+                opt => opt.MapFrom(src => new DiscordColor(src.RoleColor[0], src.RoleColor[1], src.RoleColor[2])))
+                .ReverseMap()
+                .ForMember(dest => dest.RoleColor,
+                opt => opt.MapFrom(src => new int[] { src.RoleColor.R, src.RoleColor.G, src.RoleColor.B }))
+                .ForMember(dest => dest.CustomRoleId, opt =>
+                {
+                    opt.MapFrom(src => src.CustomRoleId);
+                    opt.Condition(src => src.CustomRoleId != null);
+                });
 
             CreateMap<DiscordRole, RoleModel>()
                 .ForMember(dest => dest.DiscordRoleId, opt => opt.MapFrom(src => src.Id))

@@ -3,7 +3,7 @@ using DiscordBot.Biz.Interfaces;
 using DiscordBot.Objects.Interfaces.IRepositories;
 using DiscordBot.Objects.Models;
 
-namespace DiscordBot.Biz
+namespace DiscordBot.Biz.Bizes
 {
     public class ArtEntryBiz : GenericBiz<ArtEntry, ArtEntryModel>, IArtEntryBiz
     {
