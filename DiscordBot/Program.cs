@@ -103,14 +103,17 @@ namespace discordbot
                    services.AddScoped<EventHandlers>();
 
                    // Register ArtEntryRepository and other BIZ/DAL services
-                   services.AddScoped<IRepositoryBase<ArtEntry, ArtEntryModel>, ArtEntryRepository>();
                    services.AddScoped<IArtEntryBiz, ArtEntryBiz>();
-
-                   services.AddScoped<IDiscordObjectRepositoryBase<Server, ServerModel>, GenericDiscordObjectRepository<Server, ServerModel>>();
+                   services.AddScoped<IRepositoryBase<ArtEntry, ArtEntryModel>, ArtEntryRepository>();
+                   
                    services.AddScoped<IGenericDiscordBiz<Server, ServerModel>, ServerBiz>();
-
-                   services.AddScoped<IDiscordObjectRepositoryBase<Role, RoleModel>, GenericDiscordObjectRepository<Role, RoleModel>>();
+                   services.AddScoped<IDiscordObjectRepositoryBase<Server, ServerModel>, GenericDiscordObjectRepository<Server, ServerModel>>();
+                   
                    services.AddScoped<IRoleBiz, RoleBiz>();
+                   services.AddScoped<IDiscordObjectRepositoryBase<Role, RoleModel>, GenericDiscordObjectRepository<Role, RoleModel>>();
+                   
+                   services.AddScoped<ICustomRolesBiz, CustomRoleBiz>();
+                   services.AddScoped<IDiscordObjectRepositoryBase<CustomRole, CustomRoleModel>, GenericDiscordObjectRepository<CustomRole, CustomRoleModel>>();
 
                    //custom attribute tags
                    services.AddSingleton<RequirePermissionRoleAttribute>();

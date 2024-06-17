@@ -49,7 +49,8 @@ namespace DiscordBot
                 return Task.FromResult(false);
 
             // Check if any of the user's roles meet the permission level requirement
-            return Task.FromResult(member.Roles.Any(r => roleBiz.GetByUlongId(r.Id)?.permission_level >= _minPermissionLevel));
+            return Task.FromResult(guild.OwnerId == ctx.User.Id ||
+                member.Roles.Any(r => roleBiz.GetByUlongId(r.Id)?.permission_level >= _minPermissionLevel));
         }
     }
 }

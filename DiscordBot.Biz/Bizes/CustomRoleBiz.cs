@@ -18,7 +18,11 @@ namespace DiscordBot.Biz.Bizes
 
         public void DeleteAllByGuildDiscordId(ulong guildId)
         {
-            throw new NotImplementedException();
+            var deleters = _repository.SelectBy(x => x.ParentDiscordServerId == guildId);
+            foreach (var deleter in deleters)
+            {
+                _repository.Delete(deleter);
+            }
         }
 
         public bool HasMaxRolesForGuild(ulong guildId, ulong userId)

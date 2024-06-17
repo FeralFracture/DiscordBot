@@ -9,9 +9,11 @@ namespace DiscordBot.Biz.Bizes
     public class ServerBiz : GenericDiscordBiz<Server, ServerModel>, IGenericDiscordBiz<Server, ServerModel>
     {
         private readonly IRoleBiz _roleBiz;
-        public ServerBiz(IDiscordObjectRepositoryBase<Server, ServerModel> repository, IRoleBiz roleBiz) : base(repository)
+        private readonly ICustomRolesBiz _customRolesBiz;
+        public ServerBiz(IDiscordObjectRepositoryBase<Server, ServerModel> repository, IRoleBiz roleBiz, ICustomRolesBiz customRolesBiz) : base(repository)
         {
             _roleBiz = roleBiz;
+            _customRolesBiz = customRolesBiz;
         }
 
         public override void Prune(IEnumerable<ulong> existingIds)
@@ -21,7 +23,8 @@ namespace DiscordBot.Biz.Bizes
 
             foreach (var entry in deleted)
             {
-                _roleBiz.DeleteByDiscordID(entry.DiscordServerId);
+                _customRolesBiz.DeleteAllByGuildDiscordId(entry.DiscordServerId);
+                _roleBiz.DeleteAllByGuildDiscordId(entry.DiscordServerId);
                 _repository.Delete(entry);
             }
         }

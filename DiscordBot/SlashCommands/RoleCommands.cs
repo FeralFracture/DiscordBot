@@ -24,7 +24,7 @@ namespace DiscordBot.SlashCommands
             _mapper = mapper;
         }
 
-        [SlashCommand("SetRolePermissionLevel", "Set the permission level for a particular role"), RequirePermissionRole(1)]
+        [SlashCommand("SetRolePermissionLevel", "Set the permission level for a particular role"), RequirePermissionRole(0)]
         public async Task SetRolePermLevel(InteractionContext ctx,
             [Option("Role", "Target Role")] DiscordRole role,
             [Option("Permission_Level", "whatever level of permission this role should have")] long perm_level)
@@ -63,8 +63,8 @@ namespace DiscordBot.SlashCommands
             }
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
         }
-        [SlashCommand("UnsetRolePermissions", "Removes Role from list of roles with permissions")]
-        public async Task RemoveRole(InteractionContext ctx, [Option("Role", "Target Role")] DiscordRole role)
+        [SlashCommand("UnsetRolePermissions", "Removes Role from list of roles with permissions"), RequirePermissionRole(0)]
+        public async Task RemovePermRole(InteractionContext ctx, [Option("Role", "Target Role")] DiscordRole role)
         {
             await ctx.DeferAsync();
             var embed = new DiscordEmbedBuilder
@@ -94,6 +94,33 @@ namespace DiscordBot.SlashCommands
             _logger.LogInformation($"[Guild Name/ID: {ctx.Guild.Name}/{ctx.Guild.Id}] Removed role \"{role.Name}\" (DiscordID: {role.Id}) from perm list.");
 
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
+        }
+
+        [SlashCommand("CreateCustomRole", "Create a custom role")]
+        public async Task CreateCustomRole(InteractionContext ctx,
+            [Option("Role Name", "Name of the role to create")] string roleName,
+            [Option("Color", "Hex Color code for role")] string hexColor)
+        {
+            (var red, var green, var blue) = HexToRgb(hexColor);
+        }
+
+
+        public static (int red, int green, int blue) HexToRgb(string hex)
+        {
+            // Remove the '#' if present
+            hex = hex.TrimStart('#');
+
+            if (hex.Length != 6)
+            {
+                throw new ArgumentException("Hex color code must be 6 characters long.");
+            }
+
+            // Parse the hex string into its RGB components
+            int red = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            int green = int.Parse(hex.Substring(2, 4).Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            int blue = int.Parse(hex.Substring(4, 6).Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+
+            return (red, green, blue);
         }
     }
 }

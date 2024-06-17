@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Objects.Interfaces.IRepositories
 {
-    public interface IRepositoryBase<TEntity, TModel>
+    public interface IRepositoryBase<TEntity, TModel> 
     {
         IEnumerable<TModel> GetAll();
         bool Contains(Expression<Func<TEntity, bool>> expression);
